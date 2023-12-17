@@ -2,9 +2,11 @@ package agh.ics.oop.model;
 
 public class Grass implements WorldElement {
     private final Vector2d position;
-    public Grass(Vector2d position){
+    private final int grassEnergy;
+    public Grass(Vector2d position, int energy){
         this.position = position;
 
+        this.grassEnergy = energy;
     }
     @Override
     public String toString(){
@@ -26,4 +28,7 @@ public class Grass implements WorldElement {
     }
 
 
+    public int getGrassEnergy() {
+        return grassEnergy;
+    }
 }
