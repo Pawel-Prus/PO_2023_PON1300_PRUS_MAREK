@@ -1,85 +1,64 @@
 package agh.ics.oop;
+import java.util.*;
 
 import agh.ics.oop.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class Simulation implements Runnable {
-    private final List<MoveDirection> moves;
+public class Simulation implements Runnable{
 
-    private final WorldMap<Animal, Vector2d> map;
-
+    private final List<MoveDirection> directions;
+    private  final WorldMap map;
+    private final List<Vector2d> positions;
     private final List<Animal> animals;
 
-    private boolean wait = false;
 
-
-    public Simulation(List<MoveDirection> moves, WorldMap<Animal, Vector2d> map) {
-        this.moves = moves;
-        this.map = map;
-        this.wait = true;
-        List<Animal> allAnimals = new ArrayList<>();
-        map.getAnimals().values().forEach(animal -> {
-            allAnimals.add((Animal) animal);
-        });
-        this.animals = allAnimals;
-    }
-
-    public Simulation(List<MoveDirection> moves,List<Vector2d> positions, WorldMap<Animal , Vector2d> map) {
-        this.moves = moves;
-        List<Animal> all = new ArrayList<>();
-        positions.forEach(position -> {
-            Animal animal = new Animal(position);
+    // W implementacji listy animals wykorzystuję ArrayList, gdyż na tej liście częśćiej będą wykonywane operaje
+    // odczytu i niż dodawania badź usuwania elementów, zatem wykorzystanie ArrayList będzię bardziej optymalne
+    public Simulation(List<MoveDirection> directions, List<Vector2d> positions, WorldMap map){
+        this.directions = directions;
+        this.positions = positions;
+        List<Animal> animals = new ArrayList<>();
+        for (Vector2d move : positions) {
+            Animal animal = new Animal(move);
             try {
-                if (map.place(animal, position,true)) {
-                    all.add(animal);
-                }
+                map.place(animal);
+                animals.add(animal);
             } catch (PositionAlreadyOccupiedException e) {
-                System.err.println("Error: " + e.getMessage());
+                System.err.println(e.getMessage());
             }
-        });
-        this.animals = all;
-        this.map = map;
-    }
 
-    public Simulation(List<MoveDirection> moves,List<Vector2d> positions, WorldMap<Animal , Vector2d> map, boolean placeInform) {
-        this.moves = moves;
-        List<Animal> all = new ArrayList<>();
-        positions.forEach(position -> {
-            Animal animal = new Animal(position);
-            try {
-                if (map.place(animal, position,placeInform)) {
-                    all.add(animal);
-                }
-            } catch (PositionAlreadyOccupiedException e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-        });
-        this.animals = all;
-        this.map = map;
-    }
-
-
-    public int getNoAnimals() {return this.animals.size();}
-    public int getNoMoves() {return this.moves.size();}
-    public void run() {
-        int allAnimals = this.getNoAnimals();
-        for (int i = 0; i < getNoMoves(); i++) {
-            int animalInd = (i % allAnimals);
-            Animal currAnimal = animals.get(animalInd);
-            map.move(currAnimal,this.moves.get(i));
-            animals.set(animalInd,currAnimal);
-            if (wait) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
+        this.animals = animals;
+        this.map = map;
+
+
+    }
+    @Override
+    public void run() {
+        int animalNumber = animals.size();
+        for (int idx = 0; idx < directions.size();idx++){
+            Animal animal = animals.get(idx % animalNumber);
+            map.move(animal, directions.get(idx));
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+    }
+    public List<MoveDirection> getDirections() {
+        return directions;
+    }
+    public List<Vector2d> getPositions() {
+        return positions;
+    }
+    public List<Animal> getAnimals(){
+        return Collections.unmodifiableList(animals);
     }
 
-
-
+    public WorldMap getMap() {
+        return map;
+    }
 }

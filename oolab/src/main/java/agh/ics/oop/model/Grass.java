@@ -1,26 +1,29 @@
 package agh.ics.oop.model;
 
-public class Grass implements WorldElement<Vector2d> {
+public class Grass implements WorldElement {
+    private final Vector2d position;
+    public Grass(Vector2d position){
+        this.position = position;
 
-    public Vector2d position;
-
-    public Grass(Vector2d startLocation) {
-        this.position = startLocation;
     }
-
-    public Vector2d getPosition() {
+    @Override
+    public String toString(){
+        return "*";
+    }
+    @Override
+    public Vector2d getCurrentPosition() {
         return position;
     }
 
-    public void setPosition(Vector2d position) {
-        this.position = position;
+    @Override
+    public boolean isAt(Vector2d position) {
+        return this.position.equals(position);
     }
 
     @Override
-    public void move(MoveValidator validator, MoveDirection direction) {return;}
-
-    public String toString() {
-        return "*";
+    public MapDirection getCurrentOrientation(){
+        return null;
     }
+
 
 }

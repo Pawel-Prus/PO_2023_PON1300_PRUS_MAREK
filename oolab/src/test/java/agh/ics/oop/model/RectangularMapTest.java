@@ -1,87 +1,186 @@
 package agh.ics.oop.model;
-
-import agh.ics.oop.OptionsParser;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RectangularMapTest {
+public class RectangularMapTest  {
 
     @Test
-    public void placeTest() {
-        List<Animal> animals = List.of(new Animal(new Vector2d(0,0)),new Animal(new Vector2d(0,0)),new Animal(new Vector2d(1,1)));
-        RectangularMap map = new RectangularMap(5,5);
-        Map<Vector2d, Animal> expected = new HashMap<>();
+    public void isPositionOccupiedByAnimal() throws PositionAlreadyOccupiedException {
+        RectangularMap map = new RectangularMap(5, 5, UUID.fromString("1"));
+        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(3, 4)), new Animal(new Vector2d(4, 4)));
+        for(Animal a: animals) {
+                map.place(a);
+        }
+        assertTrue(map.isOccupied(animals.get(0).getCurrentPosition()));
+        assertTrue(map.isOccupied(animals.get(1).getCurrentPosition()));
+        assertTrue(map.isOccupied(animals.get(2).getCurrentPosition()));
+
+    }
+
+    @Test
+    public void isObjectAtPosition() throws PositionAlreadyOccupiedException{
+        RectangularMap map = new RectangularMap(10, 5, UUID.fromString("2"));
+        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(9, 4)), new Animal(new Vector2d(7, 4)));
+        List<Vector2d> expectedPositions = List.of(new Vector2d(2, 2), new Vector2d(9, 4));
+        List<Animal> invalidAnimals = List.of(new Animal(
+                new Vector2d(2,2)),
+                new Animal(new Vector2d(9,4)),
+                new Animal(new Vector2d(7, 4))
+        );
+        List<Vector2d> unexpectedPositions = List.of(new Vector2d(-5, 4), new Vector2d(11, 4), new Vector2d(7, -4));
         for (Animal animal : animals) {
-            try {
-                map.place(animal, animal.getPosition(),true);
-            } catch (PositionAlreadyOccupiedException e) {
-                System.err.println(e.getMessage());
-            }
-            if (expected.get(animal.getPosition()) == null) {expected.put(animal.getPosition(), animal);}
+            map.place(animal);
+
         }
-        Map<Vector2d, WorldElement> result = map.getAnimals();
-        assertEquals(result,expected);
+
+
+        for (Animal a : invalidAnimals) {
+            try{
+                map.place(a);
+
+            }catch (PositionAlreadyOccupiedException e){
+                assertEquals("Position " + a.getCurrentPosition() + " is already occupied.", e.getMessage());
+            }
+        }
+
+
+
+
+        for (int idx = 0; idx < expectedPositions.size(); idx++){
+            assertEquals(animals.get(idx), map.objectAt(expectedPositions.get(idx)));
+            assertNull(map.objectAt(unexpectedPositions.get(idx)));
+        }
+
+
     }
 
     @Test
-    public void moveTest() {
-        List<Animal> startAnimals = List.of(new Animal(new Vector2d(0,0)),new Animal(new Vector2d(0,0)),new Animal(new Vector2d(1,1)));
-        RectangularMap map = new RectangularMap(5,5);
+    public void areAnimalsPlacedCorrectly(){
+        RectangularMap map = new RectangularMap(10, 10, UUID.fromString("3"));
+        List<Vector2d> positions = List.of(
+                new Vector2d(1, 9),
+                new Vector2d(2, 2),
+                new Vector2d(0,5),
+                new Vector2d(0,0),
+                new Vector2d(9,9)
+        );
+
+        List<Animal> animals =  List.of(
+                new Animal(new Vector2d(1, 9)),
+                new Animal(),
+                new Animal(new Vector2d(0,5)),
+                new Animal(new Vector2d(0,0)),
+                new Animal(new Vector2d(9,9))
+        );
+        List<Animal> animalsWhitWrongPosition =  List.of(
+                new Animal(new Vector2d(1, 9)),
+                new Animal(),
+                new Animal(new Vector2d(0,5)),
+                new Animal(new Vector2d(0,0)),
+                new Animal(new Vector2d(9,9))
+        );
+        System.out.println(map);
+
+        Map<Vector2d, Animal> expectedPlacedAnimals = new HashMap<>();
+        assertEquals(expectedPlacedAnimals, map.getAnimals());
+
+        for(Animal a: animals) {
+                assertDoesNotThrow(()->map.place(a));
+
+
+        }
+
+
+        for(int idx = 0;idx<positions.size();idx++){
+            assertEquals(animals.get(idx), map.getAnimals().get(positions.get(idx)));
+
+        }
+
+        for(Animal aw: animalsWhitWrongPosition) {
+
+            try{
+                map.place(aw);
+
+            }catch (PositionAlreadyOccupiedException e){
+                assertEquals("Position " + aw.getCurrentPosition() + " is already occupied.", e.getMessage());
+            }
+
+
+
+        }
+        System.out.println(map);
+
+
+
+    }
+
+    @Test
+    public void shouldAnimalsMoveCorrectly() throws PositionAlreadyOccupiedException{
+        RectangularMap map = new RectangularMap(12, 12, UUID.fromString("4"));
+        List<Vector2d> positions = List.of(
+                new Vector2d(4, 4),
+                new Vector2d(5, 5),
+                new Vector2d(5, 4),
+                new Vector2d(4, 5)
+        );
+        List<Vector2d> expectedPositions = List.of(
+                new Vector2d(4, 8),
+                new Vector2d(5, 1),
+                new Vector2d(10, 4),
+                new Vector2d(1,5)
+        );
+        List<MapDirection> expectedOrientations = List.of(
+                MapDirection.NORTH,
+                MapDirection.SOUTH,
+                MapDirection.EAST,
+                MapDirection.WEST
+        );
+
+        List<MoveDirection> Moves = List.of(
+                MoveDirection.FORWARD,
+                MoveDirection.RIGHT,
+                MoveDirection.RIGHT,
+                MoveDirection.LEFT,
+                MoveDirection.FORWARD,
+                MoveDirection.RIGHT,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.FORWARD,
+                MoveDirection.BACKWARD
+        );
+
         List<Animal> animals = new ArrayList<>();
-        for (Animal animal : startAnimals) {
-            try {
-                if (map.place(animal, animal.getPosition(),true)) {
-                    animals.add(animal);
-                }
-            } catch (PositionAlreadyOccupiedException e) {
-                System.err.println(e.getMessage());
-            }
+        System.out.println(map);
+        for(Vector2d pos : positions) animals.add(new Animal(pos));
+        for(Animal a:  animals) {
+                map.place(a);
         }
-        String[] args = {"f","r","r","r","f","r","b","f"};
-        List<MoveDirection> directions = OptionsParser.parse(args);
-
-        for (int i = 0; i < directions.size(); i++) {
-            int animalInd = i % animals.size();
-            Animal animal = animals.get(animalInd);
-            map.move(animal,directions.get(i));
+        for(int i=0; i < Moves.size();i++){
+            map.move(animals.get(i%4), Moves.get(i));
         }
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < animals.size(); i++) {result.add(animals.get(i) + " " + animals.get(i).getPosition());}
-        List<String> expected = List.of("> (0,1)","< (1,1)");
+        System.out.println(map);
+        for (int idx =0 ;idx < expectedOrientations.size() ;idx++){
+            assertEquals(expectedOrientations.get(idx),map.getAnimals().get(expectedPositions.get(idx)).getCurrentOrientation());
+            assertEquals(expectedPositions.get(idx), map.getAnimals().get(expectedPositions.get(idx)).getCurrentPosition());
+        }
 
-        assertEquals(result,expected);
 
     }
-
-    @Test
-    public void isOccupiedTest() {
-        Animal animal = new Animal(new Vector2d(0,0));
-        RectangularMap map = new RectangularMap(5,5);
-        try {
-            map.place(animal, animal.getPosition(),true);
-        } catch (PositionAlreadyOccupiedException e) {
-            System.err.println(e.getMessage());
-        }
-        assertTrue(map.isOccupied(animal.getPosition()));
-    }
-
-    @Test
-    public void objectAtTest() {
-        Animal animal = new Animal(new Vector2d(0,0));
-        RectangularMap map = new RectangularMap(5,5);
-        try {
-            map.place(animal, animal.getPosition(),true);
-        } catch (PositionAlreadyOccupiedException e) {
-            System.err.println(e.getMessage());
-        }
-        assertEquals(map.objectAt(animal.getPosition()),animal);
-    }
-
 }

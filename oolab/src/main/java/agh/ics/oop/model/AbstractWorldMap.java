@@ -3,133 +3,120 @@ package agh.ics.oop.model;
 import agh.ics.oop.MapVisualizer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public abstract class AbstractWorldMap {
-    public int height;
-    public int width;
+public abstract class AbstractWorldMap implements WorldMap {
 
-    public int animalCount = 0;
-    public Map<Vector2d, WorldElement> animals = new HashMap<>();
+    protected final Map<Vector2d, WorldElement> animals = new HashMap<>();
+    private final List<MapChangeListener> observers = new ArrayList<>();
 
-    Map<Vector2d,WorldElement> grasses = new HashMap<>();
-
-    public void setAnimals(Map<Vector2d, WorldElement> animals) {this.animals = animals;}
-    public void setGrasses(Map<Vector2d, WorldElement> grasses) {this.grasses = grasses;}
-
-    public Map<Vector2d,WorldElement> getGrasses() {return this.grasses;}
+    protected final int width;
+    protected final int height;
+    protected final Vector2d lowerLeftLimit;
+    protected final Vector2d upperRightLimit ;
+    protected final UUID id;
 
 
-    public Map<Vector2d,WorldElement> getAnimals() {return this.animals;}
 
-    List<MapChangeListener> observers = new ArrayList<>();
-
-    private final UUID id = UUID.randomUUID();
-
-    public UUID getId() {
-        return this.id;
+    protected AbstractWorldMap(int width, int height, UUID id) {
+        this.width = width;
+        this.height = height;
+        this.id = id;
+        lowerLeftLimit = new Vector2d(0,0);
+        upperRightLimit = new Vector2d(width-1, height-1);
     }
 
-    public void registerObserver(MapChangeListener observer) {
+    public void addObserver(MapChangeListener observer){
         observers.add(observer);
     }
 
-    public void unregisterObserver(MapChangeListener observer) {
+    public void removerObserver(MapChangeListener observer){
         observers.remove(observer);
     }
 
-    public int getWidth() {return this.width;}
-    public int getHeight() {return this.height;}
-
-    public boolean isGrass(WorldElement element) {
-        return (Objects.equals(element.toString(), "*"));
-    }
-    public boolean isAnimal(WorldElement element) {
-        return ((!isGrass(element)) && (!element.equals(null)));
-    }
-
-    public void mapChanged(String event) {
-        for (MapChangeListener observer : observers) {
-            observer.mapChanged((WorldMap) this,event);
+    public synchronized void notifyObservers(String message){
+        for(MapChangeListener o : observers){
+            o.mapChanged(this, message);
         }
     }
 
-    public boolean place(WorldElement object, Vector2d position, boolean inform) throws PositionAlreadyOccupiedException {
-        if ((isAnimal(object)) && (canMoveTo(position))) {
-            animals.put(position, object);
-            if (inform) {mapChanged("Animal " + object + " placed at " + position);}
-            return true;
-        } else if ((isGrass(object)) && (grasses.get(position) == null) && (animals.get(position) == null)) {
-            grasses.put(position, object);
-            if (inform) {mapChanged("Grass " + object + " placed at " + position);}
-            return true;
-        } else {throw new PositionAlreadyOccupiedException(position);}
+    public synchronized void mapChanged(String message) {
+        notifyObservers(message);
     }
 
-
-    public void move(WorldElement object, MoveDirection direction) {
-        if (!isAnimal(object)) {return;}
-        Vector2d startPosition = (Vector2d) object.getPosition();
-        if (!objectAt(startPosition).equals(object)) {return;}
-        animals.remove(startPosition);
-        object.move((MoveValidator) this,direction);
-        animals.put((Vector2d) object.getPosition(),object);
-        mapChanged("Animal " + object + " moved from " + startPosition + " to " + object.getPosition());
+    public boolean isOccupied(Vector2d position){
+        return animals.containsKey(position);
     }
-
-
-    boolean inMap(Vector2d position) {
-        int x = position.getX();
-        int y = position.getY();
-        return (x < this.getWidth()) && (0 <= x) && (y < this.getHeight()) && (0 <= y);
+    public boolean canMoveTo(Vector2d position){
+        return !isOccupied(position);
     }
-
-    public boolean isOccupied(Vector2d position) {
-        return ((animals.get(position) != null) || (grasses.get(position) != null));
-    }
-
-    public WorldElement objectAt(Vector2d position) {
-        if (animals.get(position) != null) {return animals.get(position);}
-        else if (grasses.get(position) != null) {return grasses.get(position);}
-        else {return null;}
+    public void place (Animal animal) throws PositionAlreadyOccupiedException{
+        try {
+            if (canMoveTo(animal.getCurrentPosition())) {
+                animals.put(animal.getCurrentPosition(), animal);
+                mapChanged("Animal placed at %s".formatted(animal.getCurrentPosition()));
+            } else {
+                throw new PositionAlreadyOccupiedException(animal.getCurrentPosition());
+            }
+        } catch (PositionAlreadyOccupiedException e) {
+            System.err.println(e.getMessage());
+        }
 
     }
 
-    public boolean canMoveTo(Vector2d position) {
-        return (!isOccupied(position) || isGrass(objectAt(position)));
+    public void move(Animal animal, MoveDirection direction){
+        Vector2d oldPosition = animal.getCurrentPosition();
+        animals.remove(oldPosition);
+        animal.move(direction,this);
+        animals.put(animal.getCurrentPosition(), animal);
+        mapChanged("Animal moved from %s to %s in direction %s".formatted(oldPosition,animal.getCurrentPosition(), animal.orientationToString()));
     }
 
+
+    public String toString(){
+        MapVisualizer visualizer = new MapVisualizer(this);
+        return visualizer.draw(getCurrentBounds().lowerLeftLimit(), getCurrentBounds().upperRightLimit());
+
+    }
+
+
+    public WorldElement objectAt(Vector2d position){
+
+            return animals.get(position);
+    }
 
     public Map<Vector2d, WorldElement> getElement() {
-        Map<Vector2d, WorldElement> output = new HashMap<>();
-        for (Map.Entry<Vector2d, WorldElement> element : grasses.entrySet()) {output.put(element.getKey(), element.getValue());}
-        for (Map.Entry<Vector2d, WorldElement> element : animals.entrySet()) {output.put(element.getKey(), element.getValue());}
-        return output;
-    }
-
-    public Vector2d[] findMax(Map<Vector2d, WorldElement> map,Vector2d lL, Vector2d uR) {
-        Vector2d lowerLeft = lL;
-        Vector2d upperRight = uR;
-        for (Map.Entry<Vector2d, WorldElement> entry : map.entrySet()) {
-
-            Vector2d vector = entry.getKey();
-            if (lowerLeft == null) {lowerLeft = vector;}
-            if (upperRight == null) {upperRight = vector;}
-            upperRight = upperRight.upperRight(vector);
-            lowerLeft = lowerLeft.lowerLeft(vector);
-        }
-
-        return new Vector2d[]{lowerLeft, upperRight};
-
+        return new HashMap<>(animals);
     }
 
     public abstract Boundary getCurrentBounds();
 
-    public String toString() {
-        Boundary bounds = getCurrentBounds();
-        Vector2d lowerleft = bounds.lowerleft();
-        Vector2d upperright = bounds.upperright();
-        return (new MapVisualizer((WorldMap) this)).draw(lowerleft, upperright);
+    @Override
+    public UUID getId() {
+        return id;
     }
+
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public Vector2d getLowerLeftLimit() {
+        return lowerLeftLimit;
+    }
+
+    public Vector2d getUpperRightLimit() {
+        return upperRightLimit;
+    }
+
+    public Map<Vector2d, WorldElement> getAnimals(){
+        return animals;
+    }
+
 
 
 }

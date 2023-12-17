@@ -1,13 +1,12 @@
 package agh.ics.oop.model;
 
-public interface WorldElement<P> {
+public interface WorldElement {
 
-    P getPosition();
-
-    void setPosition(P position);
-
-    void move(MoveValidator validator, MoveDirection direction);
-
+    boolean isAt(Vector2d position);
+    Vector2d getCurrentPosition();
+    MapDirection getCurrentOrientation();
     String toString();
+
+
 
 }

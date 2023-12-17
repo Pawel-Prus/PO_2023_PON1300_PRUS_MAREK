@@ -1,53 +1,60 @@
 package agh.ics.oop;
-
-import java.util.List;
-import java.util.Random;
-import java.util.ArrayList;
-
+import static agh.ics.oop.OptionsParser.parseToEnum;
 import agh.ics.oop.model.MoveDirection;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionsParserTest {
-    public static int randint(int range) {return (int)(Math.random()*range);}
+//    @Test
+//    public void hasOnlyExpectedMoves(){
+//        String [] moves1 = {"f", "l", "r", "g", "t", "f", " i"};
+//        String [] expectedMoves1 = {"f", "l", "r", "f"};
+//        String [] testMoves1 = getExpectedMoves(moves1);
+//        String [] moves2 = {"R", "F", "0", "ola", "kr", "r ", " f "};
+//        String [] expectedMoves2 = {};
+//        String [] testMoves2 = getExpectedMoves(moves2);
+//        assertEquals(expectedMoves1.length, testMoves1.length);
+//        // Przypadek gdy żaden ruch nie jest poprawny
+//        assertEquals(expectedMoves2.length, testMoves2.length);
+//        for(int idx = 0; idx < expectedMoves1.length; idx++) {
+//            assertEquals(expectedMoves1[idx], testMoves1[idx]);
+//        }
+//    }
 
     @Test
-    public void changeTest() {
-        String[] moveTable = new String[100];
-        List<MoveDirection> moves = new ArrayList<MoveDirection>();
-        String[] characters = {"f","b","r","l","a"};
-        for (int i = 0; i < 100; i++) {
-            int check = randint(4);
-            if (check == 4) characters[4] = Character.toString((char) ((new Random()).nextInt(26) + 'a'));
+    public void areMovesCorrectlyParsedToEnum(){
+        String [] moves1 = {"f", "l", "r", "f", "r"};
+        String [] moves2 = {"f", "l", "r", "g", "t", "f", " i" , "L", "G", "r", "ala", "123"};
+        List<MoveDirection> parsedMoves1 = Arrays.asList(
+                MoveDirection.FORWARD,
+                MoveDirection.LEFT,
+                MoveDirection.RIGHT,
+                MoveDirection.FORWARD,
+                MoveDirection.RIGHT
 
-            moveTable[i] = characters[check];
-            switch (characters[check]) {
-                case "f" -> moves.add(MoveDirection.FORWARD);
-                case "b" -> moves.add(MoveDirection.BACKWARD);
-                case "r" -> moves.add(MoveDirection.RIGHT);
-                case "l" -> moves.add(MoveDirection.LEFT);
-            }
-        }
-        int size = moves.size();
-        List<MoveDirection> output2 = OptionsParser.parse(moveTable);
-        for (int i = 0; i < size; i++) {
-            assertEquals(moves.get(i), output2.get(i));
-        }
-    }
+        );
+        List<MoveDirection> testMoves1 = parseToEnum(moves1);
+        try{
 
-    @Test
-    public void throwTest() {
-        String[] moveTable = {"t"};
-        List<MoveDirection> moves = new ArrayList<MoveDirection>();
-        assertThrows(IllegalArgumentException.class, () -> {
-            OptionsParser.parse(moveTable);
-        });
+            assertThrows(IllegalArgumentException.class, () -> parseToEnum(moves2));
+        } catch (IllegalArgumentException e) {
+            fail(e + " is not legal move specification");
+        }
+        String [] moves3 = {"F ", "lr" , "a;a" , "123455" , "f ", " r"};
+
+        try{
+
+            assertThrows(IllegalArgumentException.class, () -> parseToEnum(moves3));
+        } catch (IllegalArgumentException e) {
+            fail(e + " is not legal move specification");
+        }
+        assertEquals(parsedMoves1.size(), testMoves1.size());
+        assertIterableEquals(parsedMoves1, testMoves1);
 
     }
-
-
-
 }

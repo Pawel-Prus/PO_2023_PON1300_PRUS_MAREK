@@ -67,19 +67,20 @@ public class MapVisualizer {
         StringBuilder builder = new StringBuilder();
         builder.append(" y\\x ");
         for (int j = lowerLeft.getX(); j < upperRight.getX() + 1; j++) {
-            builder.append(String.format("%2d", j));
+            if(j < 10 )builder.append(String.format("%2d", j));
+            else builder.append(String.format(" %2d", j));
         }
         builder.append(System.lineSeparator());
         return builder.toString();
     }
 
     private String drawObject(Vector2d currentPosition) {
-        if (this.map.isOccupied(currentPosition)) {
             Object object = this.map.objectAt(currentPosition);
             if (object != null) {
                 return object.toString();
             }
-        }
+
         return EMPTY_CELL;
     }
 }
+
