@@ -10,7 +10,7 @@ public class RectangularMapTest  {
     @Test
     public void isPositionOccupiedByAnimal() throws PositionAlreadyOccupiedException {
         RectangularMap map = new RectangularMap(5, 5, UUID.fromString("1"));
-        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(3, 4)), new Animal(new Vector2d(4, 4)));
+        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(3, 4),MapDirection.NORTH, 0,0), new Animal(new Vector2d(4, 4),MapDirection.NORTH, 0,0));
         for(Animal a: animals) {
                 map.place(a);
         }
@@ -23,12 +23,12 @@ public class RectangularMapTest  {
     @Test
     public void isObjectAtPosition() throws PositionAlreadyOccupiedException{
         RectangularMap map = new RectangularMap(10, 5, UUID.fromString("2"));
-        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(9, 4)), new Animal(new Vector2d(7, 4)));
+        List<Animal> animals = List.of(new Animal(), new Animal(new Vector2d(9, 4),MapDirection.NORTH, 0,0), new Animal(new Vector2d(7, 4),MapDirection.NORTH, 0,0));
         List<Vector2d> expectedPositions = List.of(new Vector2d(2, 2), new Vector2d(9, 4));
         List<Animal> invalidAnimals = List.of(new Animal(
-                new Vector2d(2,2)),
-                new Animal(new Vector2d(9,4)),
-                new Animal(new Vector2d(7, 4))
+                new Vector2d(2,2),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(9,4),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(7, 4),MapDirection.NORTH, 0,0)
         );
         List<Vector2d> unexpectedPositions = List.of(new Vector2d(-5, 4), new Vector2d(11, 4), new Vector2d(7, -4));
         for (Animal animal : animals) {
@@ -69,18 +69,17 @@ public class RectangularMapTest  {
         );
 
         List<Animal> animals =  List.of(
-                new Animal(new Vector2d(1, 9)),
+                new Animal(new Vector2d(1, 9),MapDirection.NORTH, 0,0),
                 new Animal(),
-                new Animal(new Vector2d(0,5)),
-                new Animal(new Vector2d(0,0)),
-                new Animal(new Vector2d(9,9))
+                new Animal(new Vector2d(0,5),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(9,9),MapDirection.NORTH, 0,0)
         );
         List<Animal> animalsWhitWrongPosition =  List.of(
-                new Animal(new Vector2d(1, 9)),
+                new Animal(new Vector2d(1, 9), MapDirection.NORTH,0,0),
                 new Animal(),
-                new Animal(new Vector2d(0,5)),
-                new Animal(new Vector2d(0,0)),
-                new Animal(new Vector2d(9,9))
+                new Animal(new Vector2d(0,5),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(0,0),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(9,9), MapDirection.NORTH,0,0)
         );
         System.out.println(map);
 
@@ -168,7 +167,7 @@ public class RectangularMapTest  {
 
         List<Animal> animals = new ArrayList<>();
         System.out.println(map);
-        for(Vector2d pos : positions) animals.add(new Animal(pos));
+        for(Vector2d pos : positions) animals.add(new Animal(pos, MapDirection.NORTH,0,0));
         for(Animal a:  animals) {
                 map.place(a);
         }
