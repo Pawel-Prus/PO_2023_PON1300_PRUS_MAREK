@@ -13,13 +13,14 @@ public class Animal implements WorldElement {
     private  int numberOfGenes;
     private final Genotype genotype;
     private int age;
+    public static final int GENES_RANGE = 7;
     public static final Vector2d UPPER_RIGHT_LIMIT = new Vector2d(4, 4);
     public static final Vector2d LOWER_LEFT_LIMIT = new Vector2d(0, 0);
     public Animal(){
         this.currentOrientation = MapDirection.NORTH;
         this.currentPosition = new Vector2d(2, 2);
         this.animalEnergy = 100;
-        this.genotype = new Genotype(7,numberOfGenes=10);
+        this.genotype = new Genotype(GENES_RANGE,numberOfGenes=10);
         this.age = 0;
 
     }
@@ -29,7 +30,7 @@ public class Animal implements WorldElement {
         this.currentPosition = newPosition;
         this.currentOrientation = orientation;
         this.animalEnergy = energy;
-        this.genotype = new Genotype(8, numberOfGenes);
+        this.genotype = new Genotype(GENES_RANGE, numberOfGenes);
         this.age = 0;
     }
 
@@ -44,14 +45,14 @@ public class Animal implements WorldElement {
 
     public String orientationToString(){
         return switch (this.currentOrientation){
-            case NORTH -> "↑"; // Unicode for '↑'
-            case SOUTH -> "\u2193"; // Unicode for '↓'
-            case WEST -> "\u2190"; // Unicode for '←'
-            case EAST -> "\u2192"; // Unicode for '→'
-            case NORTHWEST -> "\u2196"; // Unicode for '↖'
-            case SOUTHWEST -> "\u2199"; // Unicode for '↙'
-            case NORTHEAST -> "\u2197"; // Unicode for '↗'
-            case SOUTHEAST -> "\u2198"; // Unicode for '↘'
+            case NORTH -> "N";
+            case SOUTH -> "S";
+            case WEST -> "W";
+            case EAST -> "E";
+            case NORTHWEST -> "NW";
+            case SOUTHWEST -> "SW";
+            case NORTHEAST -> "NE";
+            case SOUTHEAST -> "SE";
 
         };
 
@@ -78,7 +79,7 @@ public class Animal implements WorldElement {
         this.changeEnergy(-(int)((energyToCopulation)*this.animalEnergy));
         mother.changeEnergy(-(int)((energyToCopulation)*mother.animalEnergy));
 
-        Genotype childGenotype = new Genotype(8, numberOfGenes, childGenes);
+        Genotype childGenotype = new Genotype(GENES_RANGE, numberOfGenes, childGenes);
         childGenotype.randomMutations();
         return new Animal(mother.currentPosition, mother.currentOrientation, childEnergy, childGenotype);
 
