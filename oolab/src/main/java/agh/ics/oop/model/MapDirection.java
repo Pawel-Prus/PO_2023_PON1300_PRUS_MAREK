@@ -26,7 +26,6 @@ public enum MapDirection {
 
 
     public MapDirection next(){
-
         return values()[(this.ordinal()+1) % 8];
     }
 
