@@ -14,11 +14,11 @@ public class GrassFiledTest {
         GrassField grassMap = new GrassField(10, UUID.fromString("1"));
         List<Animal> animals = List.of(
                 new Animal(),
-                new Animal(new Vector2d(9, 4)),
-                new Animal(new Vector2d(7, 4)),
-                new Animal(new Vector2d(70, -4)),
-                new Animal(new Vector2d(-7, 4)),
-                new Animal(new Vector2d(-7, -4))
+                new Animal(new Vector2d(9, 4),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(7, 4),MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(70, -4),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(-7, 4),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(-7, -4),MapDirection.NORTH, 0,0)
 
         );
         List<Vector2d> freePositions = List.of(new Vector2d(0,0), new Vector2d(1,1), new Vector2d(-8,4));
@@ -47,11 +47,11 @@ public class GrassFiledTest {
         );
         List<Animal> animals = List.of(
                 new Animal(),
-                new Animal(new Vector2d(0, 0)),
-                new Animal(new Vector2d(7, 0)),
-                new Animal(new Vector2d(76, -5)),
-                new Animal(new Vector2d(2, 4)),
-                new Animal(new Vector2d(-10, -4))
+                new Animal(new Vector2d(0, 0),MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(7, 0), MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(76, -5), MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(2, 4), MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(-10, -4), MapDirection.NORTH,0,0)
 
         );
         List<Vector2d> freePositions = List.of(
@@ -86,19 +86,19 @@ public class GrassFiledTest {
         );
 
         List<Animal> animals =  List.of(
-                new Animal(new Vector2d(1, 9)),
+                new Animal(new Vector2d(1, 9),MapDirection.NORTH, 0,0),
                 new Animal(),
-                new Animal(new Vector2d(0,5)),
-                new Animal(new Vector2d(0,0)),
-                new Animal(new Vector2d(9,9))
+                new Animal(new Vector2d(0,5), MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(0,0),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(9,9),MapDirection.NORTH, 0,0)
         );
         List<Animal> animalsWhitOnlyOneOtherPosition =  List.of(
-                new Animal(new Vector2d(1, 9)),
+                new Animal(new Vector2d(1, 9),MapDirection.NORTH, 0,0),
                 new Animal(),
-                new Animal(new Vector2d(0,5)),
-                new Animal(new Vector2d(0,0)),
-                new Animal(new Vector2d(9,9)),
-                new Animal(new Vector2d(99,-9))
+                new Animal(new Vector2d(0,5),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(0,0),MapDirection.NORTH, 0,0),
+                new Animal(new Vector2d(9,9), MapDirection.NORTH,0,0),
+                new Animal(new Vector2d(99,-9),MapDirection.NORTH, 0,0)
         );
 
 
@@ -134,7 +134,7 @@ public class GrassFiledTest {
     public void shouldAnimalsMoveCorrectly() throws PositionAlreadyOccupiedException {
 
         GrassField map2 = new GrassField(0, UUID.fromString("2"));
-        List<Animal> animals1 =  List.of(new Animal(new Vector2d(0, 0)),new Animal(), new Animal(new Vector2d(1,1)));
+        List<Animal> animals1 =  List.of(new Animal(new Vector2d(0, 0),MapDirection.NORTH, 0,0),new Animal(), new Animal(new Vector2d(1,1),MapDirection.NORTH, 0,0));
         for (Animal a : animals1) {
             map2.place(a);
 
@@ -219,7 +219,7 @@ public class GrassFiledTest {
         );
         List<Animal>  animals =  new ArrayList<>();
         for(Vector2d pos: positions) {
-            animals.add(new Animal(pos));
+            animals.add(new Animal(pos, MapDirection.NORTH,0,0));
 
         }
         for(Animal a : animals) {
