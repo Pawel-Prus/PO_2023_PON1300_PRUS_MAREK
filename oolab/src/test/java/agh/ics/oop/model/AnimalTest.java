@@ -5,7 +5,7 @@ public class AnimalTest {
     @Test
     public void isConvertingToStringCorrect(){
         Vector2d v1 = new Vector2d(1,3);
-        Animal animal = new Animal(v1);
+        Animal animal = new Animal(v1,MapDirection.NORTH, 0,0);
         String expectedOutput  = "^";
         String invalidOutput  = ">";
         assertEquals(expectedOutput, animal.toString());
@@ -16,7 +16,7 @@ public class AnimalTest {
     public void isAnimalAtPosition(){
         Animal animal = new Animal();
         Vector2d pos = new Vector2d(2, 4);
-        Animal animal1 = new Animal(pos);
+        Animal animal1 = new Animal(pos,MapDirection.NORTH, 0,0);
         assertFalse(animal.isAt(pos));
         assertTrue(animal1.isAt(pos));
 
@@ -38,8 +38,8 @@ public class AnimalTest {
     @Test
     public void isNextPositionCalculateCorrectly(){
         Animal animal = new Animal();
-        Animal animal1 = new Animal(new Vector2d(3, 4));
-        Animal animal2 = new Animal(new Vector2d(0, 0));
+        Animal animal1 = new Animal(new Vector2d(3, 4),MapDirection.NORTH, 0,0);
+        Animal animal2 = new Animal(new Vector2d(0, 0), MapDirection.NORTH,0,0);
         MoveDirection direction1 = MoveDirection.FORWARD;
         MoveDirection direction2 = MoveDirection.BACKWARD;
         MoveDirection direction3 = MoveDirection.RIGHT;
@@ -59,7 +59,7 @@ public class AnimalTest {
     @Test
     public void isPositionGetterWorksCorrect(){
         Animal animal = new Animal();
-        Animal animal1 = new Animal(new Vector2d(3, 2));
+        Animal animal1 = new Animal(new Vector2d(3, 2),MapDirection.NORTH, 0,0);
         Vector2d expectedPosition1 = new Vector2d(2, 2);
         Vector2d expectedPosition2 = new Vector2d(3, 2);
         assertEquals(expectedPosition1, animal.getCurrentPosition());
@@ -69,7 +69,7 @@ public class AnimalTest {
     @Test
     public void isOrientationGetterWorksCorrect(){
         Animal animal = new Animal();
-        Animal animal1 = new Animal(new Vector2d(3, 2));
+        Animal animal1 = new Animal(new Vector2d(3, 2),MapDirection.NORTH, 0,0);
         MapDirection direction1 = MapDirection.NORTH;
         MapDirection direction2 = MapDirection.EAST;
         assertEquals(direction1, animal.getCurrentOrientation());
