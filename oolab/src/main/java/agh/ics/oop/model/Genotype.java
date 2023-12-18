@@ -38,7 +38,6 @@ public class Genotype {
     }
     public void randomMutations(){
         int numberOfChangedGenes = getRandomNumber(numberOfGenes);
-        System.out.println("Numer of gens =" +numberOfChangedGenes);
         for ( int  i = 0; i< numberOfChangedGenes ; i++){
             changeOneGen();
 
