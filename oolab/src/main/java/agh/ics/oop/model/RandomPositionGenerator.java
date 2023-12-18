@@ -10,6 +10,8 @@ public class RandomPositionGenerator implements Iterable<Vector2d> {
     private final int maxHeight;
     private final int grassCount;
     private final List<Vector2d> positions;
+    private final List<Vector2d> fertilized;
+
 
     public RandomPositionGenerator(int maxWidth, int maxHeight, int grassCount) {
 
@@ -17,6 +19,16 @@ public class RandomPositionGenerator implements Iterable<Vector2d> {
         this.maxHeight = maxHeight;
         this.grassCount = grassCount;
         this.positions = generateRandomPositions();
+        this.fertilized = null;
+    }
+
+    public RandomPositionGenerator(int maxWidth, int maxHeight, int grassCount, List<Vector2d> fertilized) {
+
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        this.grassCount = grassCount;
+        this.positions = generateRandomPositions();
+        this.fertilized = fertilized;
     }
 
     private List<Vector2d> generateRandomPositions() {
@@ -24,6 +36,14 @@ public class RandomPositionGenerator implements Iterable<Vector2d> {
         for (int x = 0; x < maxWidth; x++) {
             for (int y = 0; y < maxHeight; y++) {
                 allPositions.add(new Vector2d(x, y));
+            }
+        }
+
+        if (fertilized != null) {
+            for (Vector2d position : fertilized) {
+                for (int j = 0; j < 3; j++) {
+                    allPositions.add(position);
+                }
             }
         }
 
