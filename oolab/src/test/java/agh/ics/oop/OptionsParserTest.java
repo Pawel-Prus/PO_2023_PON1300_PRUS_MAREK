@@ -28,8 +28,8 @@ public class OptionsParserTest {
 
     @Test
     public void areMovesCorrectlyParsedToEnum(){
-        String [] moves1 = {"f", "l", "r", "f", "r"};
-        String [] moves2 = {"f", "l", "r", "g", "t", "f", " i" , "L", "G", "r", "ala", "123"};
+        Integer [] moves1 = {0, 6, 2, 0, 2};
+        Integer [] moves2 = {0, 6, 2, 50, 9, 0, -7 , 30, 15, 2, 1244, 9987};
         List<MoveDirection> parsedMoves1 = Arrays.asList(
                 MoveDirection.FORWARD,
                 MoveDirection.LEFT,
@@ -45,7 +45,7 @@ public class OptionsParserTest {
         } catch (IllegalArgumentException e) {
             fail(e + " is not legal move specification");
         }
-        String [] moves3 = {"F ", "lr" , "a;a" , "123455" , "f ", " r"};
+        Integer [] moves3 = {12, -9, 34 , 999999 , 0, 2};
 
         try{
 

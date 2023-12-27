@@ -24,7 +24,6 @@ public enum MapDirection {
     }
 
 
-
     public MapDirection next(){
         return values()[(this.ordinal()+1) % 8];
     }
@@ -34,6 +33,10 @@ public enum MapDirection {
             return values()[7];
         }
         return values()[(this.ordinal()-1)%8];
+    }
+
+    public MapDirection changeOrientation(int x){
+       return values()[(this.ordinal()+x) % 8];
     }
 
     public Vector2d toUnitVector(){

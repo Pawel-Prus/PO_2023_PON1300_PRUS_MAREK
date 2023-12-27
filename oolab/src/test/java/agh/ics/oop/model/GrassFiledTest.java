@@ -160,7 +160,7 @@ public class GrassFiledTest {
                 MoveDirection.FORWARD
         );
         for(int i = 0; i < moves.size();i++){
-            map2.move(animals1.get(i%3) , moves.get(i));
+            map2.move(animals1.get(i%3) , i);
             System.out.println(map2);
 
         }
@@ -228,7 +228,7 @@ public class GrassFiledTest {
         }
         System.out.println(grassMap);
         for(int i=0; i < Moves.size();i++){
-            grassMap.move(animals.get(i%4), Moves.get(i));
+            grassMap.move(animals.get(i%4), i);
             System.out.println(grassMap);
         }
 

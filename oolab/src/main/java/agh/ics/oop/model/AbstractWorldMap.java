@@ -64,7 +64,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     }
 
-    public void move(Animal animal, MoveDirection direction){
+    public void move(Animal animal, Integer direction){
         Vector2d oldPosition = animal.getCurrentPosition();
         animals.remove(oldPosition);
         animal.move(direction,this);

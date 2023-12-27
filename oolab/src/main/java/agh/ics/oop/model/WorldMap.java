@@ -1,5 +1,5 @@
 package agh.ics.oop.model;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public interface WorldMap extends MoveValidator {
      * Moves an animal (if it is present on the map) according to specified direction.
      * If the move is not possible, this method has no effect.
      */
-    void move(Animal animal, MoveDirection direction);
+    void move(Animal animal, Integer direction);
 
     /**
      * Return true if given position on the map is occupied. Should not be
@@ -41,9 +41,8 @@ public interface WorldMap extends MoveValidator {
      * @return animal or null if the position is not occupied.
      */
 
-
     WorldElement objectAt(Vector2d position);
-   Map<Vector2d, WorldElement> getElement();
+    Map<Vector2d, WorldElement> getElement();
 
     void addObserver(MapChangeListener observer);
     void removerObserver(MapChangeListener observer);
