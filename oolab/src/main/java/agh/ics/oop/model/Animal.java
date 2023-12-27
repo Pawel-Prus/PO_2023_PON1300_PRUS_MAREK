@@ -13,6 +13,7 @@ public class Animal implements WorldElement {
     private  int numberOfGenes;
     private final Genotype genotype;
     private int age;
+    private int children = 0;
     public static final int GENES_RANGE = 7;
     public static final Vector2d UPPER_RIGHT_LIMIT = new Vector2d(4, 4);
     public static final Vector2d LOWER_LEFT_LIMIT = new Vector2d(0, 0);
@@ -108,10 +109,16 @@ public class Animal implements WorldElement {
         }
         return genes;
     }
+    private String AnimalToString1(){
+        return orientationToString()+" "+animalEnergy+" "+age+" "+children;
+    }
+    private String AnimaltoString(){
+        return orientationToString();
+    }
 
     @Override
     public String toString(){
-        return orientationToString();
+        return AnimaltoString();
     }
 
     @Override
@@ -123,26 +130,24 @@ public class Animal implements WorldElement {
         return LOWER_LEFT_LIMIT.precedes(position) && UPPER_RIGHT_LIMIT.follows(position);
     }
 
-    public Vector2d calculateNextPosition(MoveDirection direction){
-        return switch (direction){
-            case FORWARD-> currentPosition.add(currentOrientation.toUnitVector());
-            case BACKWARD -> currentPosition.subtract(currentOrientation.toUnitVector());
-            default -> currentPosition;
-
-        };
+    public Vector2d calculateNextPosition(Integer direction){
+        return currentPosition.add(currentOrientation.changeOrientation(direction).toUnitVector());
     }
-    public void move(MoveDirection direction, MoveValidator validator){
+    public void move(Integer direction, MoveValidator validator){
         Vector2d newPosition = calculateNextPosition(direction);
         if(validator.canMoveTo(newPosition)){
-            switch (direction){
-                case RIGHT -> currentOrientation = currentOrientation.next();
-                case LEFT -> currentOrientation = currentOrientation.previous();
-                case FORWARD, BACKWARD -> currentPosition = newPosition;
-            }
+            currentOrientation = currentOrientation.changeOrientation(direction);
+            currentPosition = newPosition;
+
+
         }
 
 
     }
+
+    public void changePosition(Vector2d newPosition){this.currentPosition = newPosition;}
+
+    public void changeOrientation(MapDirection newOrientation) {this.currentOrientation = newOrientation;}
     @Override
     public MapDirection getCurrentOrientation() {
         return currentOrientation;
@@ -155,6 +160,7 @@ public class Animal implements WorldElement {
     public void  incrementAge() {
         this.age ++;
     }
+    public void incrementNumberOfChildren(){this.children++;}
     public int getAnimalEnergy() {
         return animalEnergy;
     }
@@ -165,5 +171,9 @@ public class Animal implements WorldElement {
 
     public int getAge() {
         return age;
+    }
+
+    public int getChildren() {
+        return children;
     }
 }

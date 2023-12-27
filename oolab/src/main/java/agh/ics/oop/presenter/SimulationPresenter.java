@@ -128,7 +128,7 @@ public class SimulationPresenter implements MapChangeListener {
         if (firstStartClicked) {
             String moveList = movementsListTextField.getText();
             String[] moves = moveList.split("");
-            configureSimulation(moves);
+            //configureSimulation(moves);
             firstStartClicked = false;
         } else {
             openSimulationWindow();
@@ -162,7 +162,7 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
 
-    private void configureSimulation(String[] moves) {
+    private void configureSimulation(Integer[] moves) {
         List<MoveDirection> directions = OptionsParser.parseToEnum(moves);
         List<Vector2d> positions =  List.of(new Vector2d(2, 3), new Vector2d(3, 4));
         RectangularMap worldMap1 = new RectangularMap(100, 100, UUID.randomUUID());

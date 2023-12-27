@@ -48,12 +48,12 @@ public class AnimalTest {
         Vector2d expectedPos2 = new Vector2d(3, 3);
         Vector2d expectedPos3 = new Vector2d(0, 0);
         Vector2d expectedPos4 = new Vector2d(0, 1);
-        assertEquals(expectedPos1, animal.calculateNextPosition(direction1));
-        assertEquals(expectedPos2, animal1.calculateNextPosition(direction2));
-        assertEquals(expectedPos3, animal2.calculateNextPosition(direction3));
-        assertEquals(expectedPos4, animal2.calculateNextPosition(direction1));
-        assertEquals(expectedPos3, animal2.calculateNextPosition(direction4));
-        assertEquals(expectedPos4, animal2.calculateNextPosition(direction1));
+        assertEquals(expectedPos1, animal.calculateNextPosition(0));
+        assertEquals(expectedPos2, animal1.calculateNextPosition(4));
+        assertEquals(expectedPos3, animal2.calculateNextPosition(2));
+        assertEquals(expectedPos4, animal2.calculateNextPosition(0));
+        assertEquals(expectedPos3, animal2.calculateNextPosition(6));
+        assertEquals(expectedPos4, animal2.calculateNextPosition(0));
 
     }
     @Test

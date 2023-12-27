@@ -172,7 +172,7 @@ public class RectangularMapTest  {
                 map.place(a);
         }
         for(int i=0; i < Moves.size();i++){
-            map.move(animals.get(i%4), Moves.get(i));
+            map.move(animals.get(i%4), i);
         }
         System.out.println(map);
         for (int idx =0 ;idx < expectedOrientations.size() ;idx++){

@@ -38,7 +38,7 @@ public class Simulation implements Runnable{
         int animalNumber = animals.size();
         for (int idx = 0; idx < directions.size();idx++){
             Animal animal = animals.get(idx % animalNumber);
-            map.move(animal, directions.get(idx));
+            map.move(animal,idx);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
